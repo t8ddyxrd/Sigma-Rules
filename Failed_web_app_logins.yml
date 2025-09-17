@@ -1,0 +1,40 @@
+title: Failed Web Application Logins
+
+id: sigma-003
+
+status: experimental
+
+description: Detects multiple failed login attempts to web applications, helping identify credential stuffing or brute force attacks against web apps..
+
+author: t8ddy
+
+date: 17-09-25
+
+references:
+https://attack.mitre.org/techniques/T1078/
+
+tags: attack.t1078
+
+logsource:
+  product: web
+  service: [apache, nginx, iis]
+  definition: Detects Failed Web Application Logins.
+
+detection:
+  selection:
+    http.request.uri|contains: "/login"
+    http.response.status_code: 401
+  condition: selection
+
+fields:
+  - src_ip
+  - user
+  - host
+  - http.request.uri
+  - http.response.status_code
+
+falsepositives:
+  - Users mistyping their passwords
+  - Automated monitoring or health check scripts hitting the login page
+
+level: medium

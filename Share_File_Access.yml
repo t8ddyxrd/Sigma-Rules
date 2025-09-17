@@ -1,0 +1,37 @@
+title: Suspicious SMB / File Share Access
+id: sigma-004
+status: experimental
+description: Detects unusual access patterns to network file shares, including attempts to enumerate or access admin shares, which may indicate lateral movement.
+author: t8ddy
+date: 2025-09-17
+references:
+  - https://attack.mitre.org/techniques/T1021/
+tags:
+  - attack.t1021
+
+logsource:
+  product: windows
+  service: security
+  definition: Windows Security Event Log for SMB/File Share access
+
+detection:
+  selection:
+    EventID: 5140
+    ShareName|contains:
+      - "ADMIN$"
+      - "C$"
+      - "IPC$"
+  condition: selection
+
+fields:
+  - User
+  - Host
+  - ShareName
+  - EventID
+  - SourceNetworkAddress
+
+falsepositives:
+  - IT staff accessing admin shares for maintenance
+  - Automated scripts or backups accessing network shares
+
+level: medium

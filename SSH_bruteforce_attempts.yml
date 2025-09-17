@@ -1,0 +1,45 @@
+title: SSH bruteforce Attempt
+
+id: sigma-001
+
+status: experimental
+
+description: Detects repeated failed SSH login attempts, indicating potential brute force attacks on Linux/Unix systems.
+
+author: t8ddy
+
+date: 17-09-25
+
+references:
+https://attack.mitre.org/techniques/T1110/
+
+tags: attack.t1110
+
+logsource:
+  product: [linux, windows]
+  service: [sshd, security]
+  definition: SSH login attempts on Linux and Windows systems
+
+detection:
+  selection_linux:
+    authentication: failure
+    user: '*'
+  selection_windows:
+    EventID: 4625
+    LogonType: 10
+  condition: selection_linux or selection_windows
+
+fields:
+  - user
+  - src_ip
+  - host
+  - LogonType
+  - EventID
+
+falsepositives:
+  - Admin mistyping passwords on Linux or Windows
+  - Automated scripts or monitoring tools performing SSH connections
+
+level: medium
+
+

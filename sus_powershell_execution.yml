@@ -1,0 +1,47 @@
+title: Suspicious Powershell Execution
+
+id: sigma-002
+
+status: experimental
+
+description: Flags PowerShell commands that are unusual or indicative of malicious activity, such as launching network connections or running unexpected scripts.
+
+author: t8ddy
+
+date: 17-09-25
+
+references:
+https://attack.mitre.org/techniques/T1059/001/
+
+tags: attack.t1059.001
+
+logsource:
+  product: [windows]
+  service: [powershell]
+  definition: SSH login attempts on Linux and Windows systems
+
+detection:
+  selection_windows:
+    ProcessName:
+      - powershell.exe
+      - pwsh.exe
+    CommandLine|contains:
+      - "Invoke-"
+      - "-EncodedCommand"
+      - "IEX"
+      - "DownloadString"
+  condition: selection_windows
+
+fields:
+  - User
+  - Host
+  - ProcessName
+  - CommandLine
+  - ParentProcessName
+
+falsepositives:
+  - Admins running scripts for automation
+  - Scheduled tasks using PowerShell
+  - IT maintenance or monitoring scripts
+
+level: medium
